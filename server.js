@@ -1,7 +1,9 @@
 const inquirer = require ("inquirer"); 
-const EditorPrompt = require("inquirer/lib/prompts/editor");
 const mysql  = require("mysql");
+
+const EditorPrompt = require("inquirer/lib/prompts/editor");
 const cTable = require ("console.table");
+
 const connection = mysql.createConnection({
   host: "localhost",
   // Your port; if not 3306
@@ -9,96 +11,187 @@ const connection = mysql.createConnection({
   // Username
   user: "root",
   // Your password
-  password: "Barley2020",
+  password: "barley2020",
   database: "employee_db",
 });
  
 'use strict';
-// connect to mysql server and sql database 
-connection.connect(function (err) {
-if (err) throw err; 
-console.log ('connected as id' + connect.threadId); 
-// run the start function after the connection is made to prompt 
+function viewEmployees() {
+  // select * from employee order by last_name 
+    console.log("Julia Horan"); 
+    connection.query(`select employee.id, employee.first_name, employee.last_name, roles.title 
+      from employee 
+      INNER JOIN roles ON roles.id = employee.role_id` , function (err, result, fields) {
+      
+      if (err) throw err;
+      console.table(result);
+      connection.end(); 
+    });
+   // copy and past just change the query   
+  // for the add use inqurier to ask user stuff 
+}
+ 
+
+function viewDepartments() {
+}
+
+function viewRoles () {
+
+}
+
+function addEmployee()  {
+  connection.query(`select roles.id, roles.tiles, roles.salary, roles.department_id
+  from roles`,
+  function (err, result, fields) {
+  if (err) throw err;
+  // console.table(result);
+  inquirer.prompt([
+    {
+      type: "input",
+      name: "firstName",
+      message: "What is the employee's first name?",
+    },
+    {
+      type: "input",
+      name: "lastName",
+      message: "What is the employee's last name?",
+    },
+  ]).then(answers =>  {
+    var first = answer.firstName
+    var last = answer.lastName
+   console.table(result);
+
+   inquirer.prompt ([
+   {
+    type: "list",
+    name: "role",
+    message: "What is the emplyee's role?",
+    choices : ["Editor", "Graphic Designer", "Web Developer","Bookseller, HR Manager" ],
+    },
+  ]).then(answers =>  {
+     
 });
 
-module.exports = connection; 
+});
+
+  }
 
 
-  inquirer.prompt([
 
-    // {
-    //   type: "input",
-    //   name: "firstName",
-    //   message: "What is the employee's first name?",
-    // },
-    // {
-    //   type: "input",
-    //   name: "lastName",
-    //   message: "What is the employee's last name?",
-    // },
+function addDepartment(){
+
+}
+
+function  addRole(){
+
+}
+
+function updateEmployeeRole() {
+
+}
+
+
+const init = async () => {
+  try {
+
+    // connect to mysql server and sql database 
+await connection.connect(function (err) {
+  if (err) throw err; 
+  console.log ('connected as id' + connection.threadId); 
+
+
+  // run the start function after the connection is made to prompt 
+  });
+
+    const answers = await inquirer.prompt([
     {
       type: "list",
-      name: "department",
-      message: "What is the employee's department?",
-      choices: ["Editioral", "Marketing", "Programmer", "Sales", "Human Resources"],      
-      },  
+      name: "action", 
+      message: "how to update the chart?",
+      choices: ["view all employees" ,
+      "view all departments", 
+      "view all roles",
+      "add employee",  
+      "add department",
+      "add role",
+      "update employee role"],
+     },
+    {
+      type: "input",
+      name: "firstName",
+      message: "What is the employee's first name?",
+    },
+    {
+      type: "input",
+      name: "lastName",
+      message: "What is the employee's last name?",
+    },
+  
       {
       type: "list",
       name: "role",
       message: "What is the emplyee's role?",
       choices : ["Editor", "Graphic Designer", "Web Developer","Bookseller, HR Manager" ],
       },  
-      {
-       type: "list",
-       message: "how to update the chart?",
-       choices: ["view all employee" ,
-       "view all departments", 
-       "add employee",  
-       "add department",
-       "add roles",
-       "update employee role"],
-      },
-  ]); 
-
-// name: "choices" }).then (answers => {
-//   console.log (answers.choices)
-//    switch (answers.choices) {
+  // {
+    //   type: "list",
+    //   name: "department",
+    //   message: "What is the employee's department?",
+    //   choices: ["Editioral", "Marketing", "Programmer", "Sales", "Human Resources"],      
+    //   },  
 
 
-// name = choices.then (answers => {
-//   console.log (answers.choices)
-//    switch (answers.choices) {
 
-// case "view all employee":
-// viewemployees() 
-// break; 
 
-// case  "view all departments":
-// viewDepartments() 
-// break; 
+  ]).then (answers => {
+  console.log (JSON.stringify (answers));
+   switch (answers.action) {
 
-// case  "add employee":
-// addEmployee() 
-// break;  
+case "view all employees":
+viewEmployees() 
+break; 
 
-// case "add department":
-// addDepartment()
-// break; 
 
-// case "add roles":
-// addRole()
-// break; 
+case  "view all departments":
+viewDepartments() 
+break; 
 
-// case "update employee role": 
-// updateEmployeeRole()
-// break; 
 
-// case "update employee role": 
-// updateEmployeeRole()
-// break; 
+case "view all roles":
+viewRoles()
+break; 
 
-// default: 
-// connection.end();
-// break;
 
-   
+case  "add employee":
+addEmployee() 
+break;  
+
+case "add department":
+addDepartment()
+break; 
+
+case "add role":
+addRole()
+break; 
+
+case "update employee role": 
+updateEmployeeRole()
+break; 
+
+
+default: 
+connection.end();
+break;
+
+}
+
+});
+
+} catch (err) {
+  console.log(err);
+}
+}
+
+init (); 
+ 
+module.exports = connection; 

@@ -1,8 +1,8 @@
-const inquirer = require ("inquirer"); 
-const mysql  = require("mysql");
+const inquirer = require("inquirer");
+const mysql = require("mysql");
 
 const EditorPrompt = require("inquirer/lib/prompts/editor");
-const cTable = require ("console.table");
+const cTable = require("console.table");
 
 const connection = mysql.createConnection({
   host: "localhost",
@@ -14,184 +14,157 @@ const connection = mysql.createConnection({
   password: "barley2020",
   database: "employee_db",
 });
- 
-'use strict';
+
+("use strict");
 function viewEmployees() {
-  // select * from employee order by last_name 
-    console.log("Julia Horan"); 
-    connection.query(`select employee.id, employee.first_name, employee.last_name, roles.title 
+  // select * from employee order by last_name
+  console.log("Julia Horan");
+  connection.query(
+    `select employee.id, employee.first_name, employee.last_name, roles.title 
       from employee 
-      INNER JOIN roles ON roles.id = employee.role_id` , function (err, result, fields) {
-      
+      INNER JOIN roles ON roles.id = employee.role_id`,
+    function (err, result, fields) {
       if (err) throw err;
       console.table(result);
-      connection.end(); 
-    });
-   // copy and past just change the query   
-  // for the add use inqurier to ask user stuff 
-}
- 
-
-function viewDepartments() {
+      connection.end();
+    }
+  );
+  // copy and past just change the query
+  // for the add use inqurier to ask user stuff
 }
 
-function viewRoles () {
+function viewDepartments() {}
 
-}
+function viewRoles() {}
 
-function addEmployee()  {
-  connection.query(`select roles.id, roles.tiles, roles.salary, roles.department_id
+function addEmployee() {
+  connection.query(
+    `select roles.id, roles.title, roles.salary, roles.department_id
   from roles`,
-  function (err, result, fields) {
-  if (err) throw err;
-  // console.table(result);
-  inquirer.prompt([
-    {
-      type: "input",
-      name: "firstName",
-      message: "What is the employee's first name?",
-    },
-    {
-      type: "input",
-      name: "lastName",
-      message: "What is the employee's last name?",
-    },
-  ]).then(answers =>  {
-    var first = answer.firstName
-    var last = answer.lastName
-   console.table(result);
+    function (err, result, fields) {
+      if (err) throw err;
+      // console.table(result);
+      inquirer
+        .prompt([
+          {
+            type: "input",
+            name: "firstName",
+            message: "What is the employee's first name?",
+          },
+          {
+            type: "input",
+            name: "lastName",
+            message: "What is the employee's last name?",
+          },
+        ])
+        .then((answerName) => {
+          var first = answerName.firstName;
+          var last = answerName.lastName;
+          
+          console.table(result);
 
-   inquirer.prompt ([
-   {
-    type: "list",
-    name: "role",
-    message: "What is the emplyee's role?",
-    choices : ["Editor", "Graphic Designer", "Web Developer","Bookseller, HR Manager" ],
-    },
-  ]).then(answers =>  {
-     
-});
+          inquirer
+            .prompt([
+              {
+                type: "input",
+                name: "role",
+                message: "What is the emplyee's role_id?"
+              },
+            ])
+            .then((answerRole) => {
+              var role = answerRole.role
+              connection.query(
+                // insert into employee (first_name, last_name, role_id) values ('Julia', 'Horan', 1);
 
-});
+                `insert into employee (first_name, last_name, role_id) values (?,?,?)`, [first, last, role,],
 
-  }
+  
 
+                function (err, result, fields) {
+                  if (err) throw err;
+                  connection.end (); 
+              }); 
 
-
-function addDepartment(){
-
+            });
+        });
+    }
+  );
 }
 
-function  addRole(){
+function addDepartment() {}
 
-}
+function addRole() {}
 
-function updateEmployeeRole() {
-
-}
-
+function updateEmployeeRole() {}
 
 const init = async () => {
   try {
+    // connect to mysql server and sql database
+    await connection.connect(function (err) {
+      if (err) throw err;
+      console.log("connected as id" + connection.threadId);
 
-    // connect to mysql server and sql database 
-await connection.connect(function (err) {
-  if (err) throw err; 
-  console.log ('connected as id' + connection.threadId); 
+      // run the start function after the connection is made to prompt
+    });
 
+    const answers = await inquirer
+      .prompt([
+        {
+          type: "list",
+          name: "action",
+          message: "how to update the chart?",
+          choices: [
+            "view all employees",
+            "view all departments",
+            "view all roles",
+            "add employee",
+            "add department",
+            "add role",
+            "update employee role",
+          ],
+        },
+      ])
+      .then((answers) => {
+        console.log(JSON.stringify(answers));
+        switch (answers.action) {
+          case "view all employees":
+            viewEmployees();
+            break;
 
-  // run the start function after the connection is made to prompt 
-  });
+          case "view all departments":
+            viewDepartments();
+            break;
 
-    const answers = await inquirer.prompt([
-    {
-      type: "list",
-      name: "action", 
-      message: "how to update the chart?",
-      choices: ["view all employees" ,
-      "view all departments", 
-      "view all roles",
-      "add employee",  
-      "add department",
-      "add role",
-      "update employee role"],
-     },
-    {
-      type: "input",
-      name: "firstName",
-      message: "What is the employee's first name?",
-    },
-    {
-      type: "input",
-      name: "lastName",
-      message: "What is the employee's last name?",
-    },
-  
-      {
-      type: "list",
-      name: "role",
-      message: "What is the emplyee's role?",
-      choices : ["Editor", "Graphic Designer", "Web Developer","Bookseller, HR Manager" ],
-      },  
-  // {
-    //   type: "list",
-    //   name: "department",
-    //   message: "What is the employee's department?",
-    //   choices: ["Editioral", "Marketing", "Programmer", "Sales", "Human Resources"],      
-    //   },  
+          case "view all roles":
+            viewRoles();
+            break;
 
+          case "add employee":
+            addEmployee();
+            break;
 
+          case "add department":
+            addDepartment();
+            break;
 
+          case "add role":
+            addRole();
+            break;
 
-  ]).then (answers => {
-  console.log (JSON.stringify (answers));
-   switch (answers.action) {
+          case "update employee role":
+            updateEmployeeRole();
+            break;
 
-case "view all employees":
-viewEmployees() 
-break; 
+          default:
+            connection.end();
+            break;
+        }
+      });
+  } catch (err) {
+    console.log(err);
+  }
+};
 
+init();
 
-case  "view all departments":
-viewDepartments() 
-break; 
-
-
-case "view all roles":
-viewRoles()
-break; 
-
-
-case  "add employee":
-addEmployee() 
-break;  
-
-case "add department":
-addDepartment()
-break; 
-
-case "add role":
-addRole()
-break; 
-
-case "update employee role": 
-updateEmployeeRole()
-break; 
-
-
-default: 
-connection.end();
-break;
-
-}
-
-});
-
-} catch (err) {
-  console.log(err);
-}
-}
-
-init (); 
- 
-module.exports = connection; 
+module.exports = connection;

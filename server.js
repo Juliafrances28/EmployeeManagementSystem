@@ -1,3 +1,4 @@
+
 const inquirer = require("inquirer");
 const mysql = require("mysql");
 
@@ -34,8 +35,31 @@ function viewEmployees() {
 }
 
 function viewDepartments() {}
+console.log("Julia Horan");
+connection.query(
+  `select department.id, department.title, roles.title
+  from department 
+  INNER JOIN roles on roles.id = roles.department_id`,
+  function (err, result, fields) {
+    if (err) throw err;
+    console.table(result);
+    connection.end();
+  }
+);
 
 function viewRoles() {}
+console.log("Julia Horan");
+connection.query(
+  `select roles.id, roles.title, roles.salary. roles.department_id
+  from roles 
+  INNER JOIN department ON department.id = roles.department_id`,
+
+  function (err, result, fields) {
+    if (err) throw err;
+    console.table(result);
+    connection.end();
+
+
 
 function addEmployee() {
   connection.query(
@@ -78,8 +102,6 @@ function addEmployee() {
 
                 `insert into employee (first_name, last_name, role_id) values (?,?,?)`, [first, last, role,],
 
-  
-
                 function (err, result, fields) {
                   if (err) throw err;
                   connection.end (); 
@@ -88,11 +110,10 @@ function addEmployee() {
             });
         });
     }
-  );
-}
+  )
 
-function addDepartment() {}
-
+  function addDepartment() {}
+  
 function addRole() {}
 
 function updateEmployeeRole() {}

@@ -16,7 +16,8 @@ const connection = mysql.createConnection({
 });
 
 ("use strict");
-function viewEmployees() {
+
+function viewEmployees()  {
   connection.query(
     `select employee.id, employee.first_name, employee.last_name, roles.title 
       from employee 
@@ -26,12 +27,13 @@ function viewEmployees() {
       console.table(result);
       connection.end();
     }
-  );
+    
+    );
   // copy and past just change the query
   // for the add use inqurier to ask user stuff
-}
 
-function viewDepartments() {}
+// why is this dull? 
+function viewDepartments() {
 connection.query(
   `select department.id, department.title, roles.title
   from department 
@@ -41,10 +43,13 @@ connection.query(
     console.table(result);
     connection.end();
   }
-);
+)
 
-function viewRoles() {}
-console.log("Julia Horan");
+};
+
+// why is this dull? 
+
+function viewRoles() {
 connection.query(
   `select roles.id, roles.title, roles.salary. roles.department_id
   from roles 
@@ -55,8 +60,10 @@ connection.query(
     console.table(result);
     connection.end();
 
+  }
 
-
+)  
+  };
 function addEmployee() {
   connection.query(
     `select employee.id, first_name, last_name, role_id
@@ -107,8 +114,8 @@ function addEmployee() {
 
 
 // the department table should have a name column but I gave it a title column instead. I just changes the column header.   
-  function addDepartment() {}
-  connection.query(
+  function addDepartment() {
+  connection.query
     `select department.id, department.title, 
   from department`,
     function (err, result, fields) {
@@ -126,6 +133,8 @@ function addEmployee() {
             message: "What department does this employee work in?",
           },
         ])
+
+       // why is the variable dull? It matches with the counter part on right...
         .then((answerDep) => {
           var depID = answerDep.depID;
           var title = answerDep.title;
@@ -137,7 +146,7 @@ function addEmployee() {
         if (err) throw err;
         connection.end (); 
    
-      }; 
+      }); 
 
 
 
@@ -184,8 +193,74 @@ function addRole() {
                   if (err) throw err;
                   connection.end (); 
 
-function updateEmployeeRole() {}
+         //// why is the function name dull?  all the openers and closers match up.           
+function updateEmployeeRole () {
+  connection.query(
+    `select roles.id, roles.title, roles.salary, roles.department_id
+  from roles`,
+    function (err, result, fields) {
+      if (err) throw err;
+      // console.table(result);
+    }
+    
+  )};
 
+  
+      inquirer .prompt([
+          {
+            type: "input",
+            name: "newSalary",
+            message: "What is the employee's new salary?",
+          },
+          {
+            type: "input",
+            name: "newtitle",
+            message: "What is the employee's new title?",
+          },
+        ])
+        .then((answerRole) => {
+          var title = answerRole.title;
+          var  salary = answerRole.salary
+
+          console.table(result);
+        
+        
+          inquirer
+            .prompt([
+              {
+                type: "input",
+                name: "department",
+                message: "What is the emplyee's department_id?"
+              },
+            ])
+            .then((answerID) => {
+             // why is the variable ID dull? It is a repeated syntax and in other places this is not a issue. 
+
+              var ID = answerID.roleID
+              connection.query(
+                `insert into roles (title,salary department_id) values (?,?,?)`, [title, salary, department_id],
+            //why is the word, result, dull?  this particular line of code is repeated in a number of places and  that is only the case here...
+                function (err, result, fields) {
+                  if (err) throw err;
+                  connection.end (); 
+            
+                })
+                
+            
+  
+            
+         function removeEmployees() {
+                    connection.query(
+                      (`select employee employee.id, employee.first_name, employee.last_name)`,
+                   
+                      function (err, result, fields) {
+                        if (err) throw err;
+                        console.table(result);
+                        connection.end();
+                      }) 
+
+                    )};
+                    
 
 const init = async () => {
   try {
@@ -250,6 +325,7 @@ const init = async () => {
             break;
         }
       });
+
   } catch (err) {
     console.log(err);
   }
@@ -258,4 +334,13 @@ const init = async () => {
 init();
 
 module.exports = connection 
+   
+});   
+
+   });
+
+
+  });
+
+                
 

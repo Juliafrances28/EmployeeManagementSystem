@@ -1,4 +1,3 @@
-
 const inquirer = require("inquirer");
 const mysql = require("mysql");
 
@@ -18,8 +17,6 @@ const connection = mysql.createConnection({
 
 ("use strict");
 function viewEmployees() {
-  // select * from employee order by last_name
-  console.log("Julia Horan");
   connection.query(
     `select employee.id, employee.first_name, employee.last_name, roles.title 
       from employee 
@@ -35,7 +32,6 @@ function viewEmployees() {
 }
 
 function viewDepartments() {}
-console.log("Julia Horan");
 connection.query(
   `select department.id, department.title, roles.title
   from department 
@@ -63,11 +59,10 @@ connection.query(
 
 function addEmployee() {
   connection.query(
-    `select roles.id, roles.title, roles.salary, roles.department_id
-  from roles`,
+    `select employee.id, first_name, last_name, role_id
+  from employee`,
     function (err, result, fields) {
       if (err) throw err;
-      // console.table(result);
       inquirer
         .prompt([
           {
@@ -98,8 +93,6 @@ function addEmployee() {
             .then((answerRole) => {
               var role = answerRole.role
               connection.query(
-                // insert into employee (first_name, last_name, role_id) values ('Julia', 'Horan', 1);
-
                 `insert into employee (first_name, last_name, role_id) values (?,?,?)`, [first, last, role,],
 
                 function (err, result, fields) {
@@ -112,11 +105,87 @@ function addEmployee() {
     }
   )
 
+
+// the department table should have a name column but I gave it a title column instead. I just changes the column header.   
   function addDepartment() {}
-  
-function addRole() {}
+  connection.query(
+    `select department.id, department.title, 
+  from department`,
+    function (err, result, fields) {
+      if (err) throw err;
+      inquirer
+        .prompt([
+          {
+            type: "input",
+            name: "department_id",
+            message: "What is the department_id?",
+          },
+          {
+            type: "input",
+            name: "department",
+            message: "What department does this employee work in?",
+          },
+        ])
+        .then((answerDep) => {
+          var depID = answerDep.depID;
+          var title = answerDep.title;
+      
+            connection.query(
+              `insert into department (id, title) values (?,?,?)`, [id, title],
+              
+        function(err, result, fields) {
+        if (err) throw err;
+        connection.end (); 
+   
+      }; 
+
+
+
+function addRole() {
+  connection.query(
+    `select roles.id, roles.title, roles.salary, roles.department_id
+  from roles`,
+    function (err, result, fields) {
+      if (err) throw err;
+      // console.table(result);
+      inquirer
+        .prompt([
+          {
+            type: "input",
+            name: "Salary",
+            message: "What is the employee's salary?",
+          },
+          {
+            type: "input",
+            name: "title",
+            message: "What is the employee's title?",
+          },
+        ])
+        .then((answerRole) => {
+          var title = answerRole.title;
+          var  salary = answerRole.salary
+
+          console.table(result);
+
+          inquirer
+            .prompt([
+              {
+                type: "input",
+                name: "department",
+                message: "What is the emplyee's department_id?"
+              },
+            ])
+            .then((answerID) => {
+              var ID = answerID.roleID
+              connection.query(
+                `insert into roles (title,salary department_id) values (?,?,?)`, [title, salary, department_id],
+
+                function (err, result, fields) {
+                  if (err) throw err;
+                  connection.end (); 
 
 function updateEmployeeRole() {}
+
 
 const init = async () => {
   try {
@@ -188,4 +257,5 @@ const init = async () => {
 
 init();
 
-module.exports = connection;
+module.exports = connection 
+

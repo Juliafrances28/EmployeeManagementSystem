@@ -25,7 +25,7 @@ function viewEmployees() {
     function (err, result, fields) {
       if (err) throw err;
       console.table(result);
-      connection.end();
+   
     }
   );
 }
@@ -38,31 +38,32 @@ function viewDepartments() {
     function (err, result, fields) {
       if (err) throw err;
       console.table(result);
-      connection.end();
+      
     }
   );
 }
 
 function viewRoles() {
   connection.query(
-    `select roles.id, roles.title, roles.salary. roles.department_id
-  from roles 
-  INNER JOIN department ON department.id = roles.department_id`,
+    `select roles.id, roles.title, salary, department_id 
+    from roles 
+    INNER JOIN department ON department.id = roles.department_id`,
 
     function (err, result, fields) {
       if (err) throw err;
       console.table(result);
-      connection.end();
+     
     }
   );
 }
 
+
 function addEmployee() {
-  connection.query(
-    `select employee.id, first_name, last_name, role_id
-  from employee`,
-    function (err, result, fields) {
-      if (err) throw err;
+  // connection.query(
+  //   `select employee.id, first_name, last_name, role_id
+  // from employee`,
+  //  function (err, result, fields) {
+  //   if (err) throw err;
       inquirer
         .prompt([
           {
@@ -98,62 +99,41 @@ function addEmployee() {
 
                 function (err, result, fields) {
                   if (err) throw err;
-                  connection.end();
+             
                 }
               );
             });
         });
     }
-  );
-}
+//   );
+// }
 // something to be aware of, the department table should have a name column but I gave it a title column instead. I just changes the column header.
 function addDepartment() {
-  connection.query(
-    `select department.id, department.title, 
-  from department`,
-    function (err, result, fields) {
-      if (err) throw err;
+  inquirer
+    .prompt([
+      {
+        type: "name",
+        name: "department",
+        message: "What is the department name?",
+      },
+    ])
 
-      inquirer
-        .prompt([
-          {
-            type: "input",
-            name: "department_id",
-            message: "What is the department_id?",
-          },
-          {
-            type: "input",
-            name: "department",
-            message: "What department does this employee work in?",
-          },
-        ])
+    // why is the variable dull? It matches with the counter part on right...
+    .then((answerDep) => {
+      var title = answerDep.name;
 
-        // why is the variable dull? It matches with the counter part on right...
-        .then((answerDep) => {
-          var depID = answerDep.depID;
-          var title = answerDep.title;
+      connection.query(
+        `insert into department (title) values (?)`,
+        [title],
 
-          connection.query(
-            `insert into department (id, title) values (?,?,?)`,
-            [id, title],
-
-            function (err, result, fields) {
-              if (err) throw err;
-              connection.end();
-            }
-          );
-        });
-    }
-  );
+        function (err, result, fields) {
+          if (err) throw err;
+        }
+      );
+    });
 }
-function addRole() {
-  connection.query(
-    `select roles.id, roles.title, roles.salary, roles.department_id
-  from roles`,
-    function (err, result, fields) {
-      if (err) throw err;
-      console.table(result);
 
+function addRole() {
       inquirer
         .prompt([
           {
@@ -168,7 +148,7 @@ function addRole() {
           },
         ])
         .then((answerRole) => {
-          var title = answerRole.title;
+          var title = answerRole.title;xk
           var salary = answerRole.salary;
 
           console.table(result);
@@ -189,20 +169,15 @@ function addRole() {
 
                 function (err, result, fields) {
                   if (err) throw err;
-                  connection.end();
+            
                 }
               );
             });
         });
     }
-  );
-}
+  
+
 function updateEmployeeRole() {
-  connection.query(
-    `select roles.id, roles.title, roles.salary, roles.department_id
-  from roles`,
-    function (err, result, fields) {
-      if (err) throw err;
 
       inquirer
         .prompt([
@@ -238,22 +213,19 @@ function updateEmployeeRole() {
                 [title, salary, department_id],
                 function (err, result, fields) {
                   if (err) throw err;
-                  connection.end();
+        
                 }
               );
             });
         });
     }
-  );
-}
+
 const init = async () => {
   try {
     // connect to mysql server and sql database
     await connection.connect(function (err) {
       if (err) throw err;
       console.log("connected as id" + connection.threadId);
-
-      // run the start function after the connection is made to prompt
     });
 
     const answers = await inquirer
@@ -266,10 +238,10 @@ const init = async () => {
             "view all employees",
             "view all departments",
             "view all roles",
-            "add employee",
-            "add department",
-            "add role",
-            "update employee role",
+            "add employees",
+            "add departments",
+            "add roles",
+            "update employee roles",
           ],
         },
       ])

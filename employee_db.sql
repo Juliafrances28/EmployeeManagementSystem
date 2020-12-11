@@ -7,30 +7,28 @@ USE employee_db;
 
 CREATE TABLE department (
 id INT NOT NULL AUTO_INCREMENT,  
-title VARCHAR (30) NOT NULL,
+title VARCHAR (30),
 PRIMARY KEY (id) 
 );
       
-insert into department (title,id)  values ('programmer',1);
-insert into department (title,id)  values ('It', 2);
-insert into department (title,id)  values ('advertising',3);
-insert into department (title,id)  values ('sales', 4);
-insert into department (title,id)  values ('payroll', 5);
+insert into department (tile)  values ('engineering');
+insert into department (title)  values ('marketing');
+insert into department (title)  values ('sales');
+insert into department (title)  values ('HR');
 
 CREATE TABLE roles (
 id INT NOT NULL AUTO_INCREMENT,
-department_id INT NOT NULL,
-title VARCHAR (30) NOT NULL,
+department_id INT,
+title VARCHAR (30),
 Salary DECIMAL (5,2),  
 PRIMARY KEY (id)
 ); 
 
 
-insert into roles (title,salary, department_id) values ('programmer', 100, 1 );
-insert into roles (title,salary, department_id) values ('It', 90, 2);
-insert into roles (title,salary, department_id) values ('advertising', 70, 3);
-insert into roles (title,salary, department_id) values ('sales', 50, 4);
-insert into roles (title,salary, department_id) values ('payroll', 30, 5);
+insert into roles ( title, salary, department_id) values ('front-end', 100, 1 );
+insert into roles (title, salary,  department_id) values ('advertiser', 70, 2);
+insert into roles (title, salary,  department_id) values ('sales rep', 70, 3);
+insert into roles (title, salary, department_id) values ('payroll', 30, 4);
 
 
 CREATE TABLE employee (

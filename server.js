@@ -15,17 +15,83 @@ const connection = mysql.createConnection({
   database: "employee_db",
 });
 
-("use strict");
+var title;
+var salary;
+connection.connect(function (err) {
+  if (err) throw err;
+  console.log("connected as id" + connection.threadId);
+  init();
+});
+
+// ("use strict");
+
+function init() {
+  // connect to mysql server and sql database
+
+  inquirer
+    .prompt([
+      {
+        type: "list",
+        name: "action",
+        message: "how to update the chart?",
+        choices: [
+          "view all employees",
+          "view all departments",
+          "view all roles",
+          "add employees",
+          "add departments",
+          "add roles",
+          "update employee roles",
+        ],
+      },
+    ])
+    .then((answers) => {
+      // console.log(JSON.stringify(answers));
+      switch (answers.action) {
+        case "view all employees":
+          viewEmployees();
+          break;
+
+        case "view all departments":
+          viewDepartments();
+          break;
+
+        case "view all roles":
+          viewRoles();
+          break;
+
+        case "add employees":
+          addEmployee();
+          break;
+
+        case "add departments":
+          addDepartment();
+          break;
+
+        case "add roles":
+          addRole();
+          break;
+
+        case "update employee roles":
+          updateEmployeeRole();
+          break;
+
+        // default:
+        //   connection.end();
+        //   break;
+      }
+    });
+}
 
 function viewEmployees() {
   connection.query(
-    `select employee.id, employee.first_name, employee.last_name, roles.title 
-      from employee 
+    `select employee.id, employee.first_name, employee.last_name, roles.title
+      from employee
       INNER JOIN roles ON roles.id = employee.role_id`,
     function (err, result, fields) {
       if (err) throw err;
       console.table(result);
-   
+      init();
     }
   );
 }
@@ -38,7 +104,7 @@ function viewDepartments() {
     function (err, result, fields) {
       if (err) throw err;
       console.table(result);
-      
+      init();
     }
   );
 }
@@ -52,61 +118,61 @@ function viewRoles() {
     function (err, result, fields) {
       if (err) throw err;
       console.table(result);
-     
+      init();
     }
   );
 }
 
-
 function addEmployee() {
+  console.log("TEST");
   // connection.query(
   //   `select employee.id, first_name, last_name, role_id
   // from employee`,
   //  function (err, result, fields) {
-  //   if (err) throw err;
+  //   if (err) throw err;ç
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "firstName",
+        message: "What is the employee's first name?",
+      },
+      {
+        type: "input",
+        name: "lastName",
+        message: "What is the employee's last name?",
+      },
+    ])
+    .then((answerName) => {
+      var first = answerName.firstName;
+      var last = answerName.lastName;
+
+      console.table(answerName);
+
       inquirer
         .prompt([
           {
             type: "input",
-            name: "firstName",
-            message: "What is the employee's first name?",
-          },
-          {
-            type: "input",
-            name: "lastName",
-            message: "What is the employee's last name?",
+            name: "role",
+            message: "What is the emplyee's role_id?",
           },
         ])
-        .then((answerName) => {
-          var first = answerName.firstName;
-          var last = answerName.lastName;
+        .then((answerRole) => {
+          var role = answerRole.role;
+          connection.query(
+            `insert into employee (first_name, last_name, role_id) values (?,?,?)`,
+            [first, last, role],
 
-          console.table(result);
-
-          inquirer
-            .prompt([
-              {
-                type: "input",
-                name: "role",
-                message: "What is the emplyee's role_id?",
-              },
-            ])
-            .then((answerRole) => {
-              var role = answerRole.role;
-              connection.query(
-                `insert into employee (first_name, last_name, role_id) values (?,?,?)`,
-                [first, last, role],
-
-                function (err, result, fields) {
-                  if (err) throw err;
-             
-                }
-              );
-            });
+            function (err, result, fields) {
+              if (err) throw err;
+            }
+          );
+          console.log("employee added!");
+          init();
         });
-    }
-//   );
-// }
+    });
+}
+
 // something to be aware of, the department table should have a name column but I gave it a title column instead. I just changes the column header.
 function addDepartment() {
   inquirer
@@ -128,164 +194,105 @@ function addDepartment() {
 
         function (err, result, fields) {
           if (err) throw err;
+          init();
         }
       );
+      console.log("department added!");
     });
 }
 
 function addRole() {
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "salary",
+        message: "What is the employee's salary?",
+      },
+      {
+        type: "input",
+        name: "title",
+        message: "What is the employee's title?",
+      },
+    ])
+    .then((answerRole) => {
+      title = answerRole.title;
+      salary = answerRole.salary;
+
+      // var was removed
+      console.table(answerRole);
+
       inquirer
         .prompt([
           {
             type: "input",
-            name: "Salary",
-            message: "What is the employee's salary?",
-          },
-          {
-            type: "input",
-            name: "title",
-            message: "What is the employee's title?",
+            name: "department",
+            message: "What is the emplyee's department_id?",
           },
         ])
-        .then((answerRole) => {
-          var title = answerRole.title;xk
-          var salary = answerRole.salary;
+        .then((answerID) => {
+          console.log(answerID);
+          var department_id = answerID.roleID;
+          console.log(department_id);
+          connection.query(
+            `insert into roles (title, salary, department_id) values (?,?,?)`,
+            [title, salary, department_id],
 
-          console.table(result);
-
-          inquirer
-            .prompt([
-              {
-                type: "input",
-                name: "department",
-                message: "What is the emplyee's department_id?",
-              },
-            ])
-            .then((answerID) => {
-              var department_id = answerID.roleID;
-              connection.query(
-                `insert into roles (title,salary department_id) values (?,?,?)`,
-                [title, salary, department_id],
-
-                function (err, result, fields) {
-                  if (err) throw err;
-            
-                }
-              );
-            });
+            function (err, result, fields) {
+              if (err) throw err;
+            }
+          );
+          console.log("answer added!");
+          init();
         });
-    }
-  
+    });
+}
 
 function updateEmployeeRole() {
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "newSalary",
+        message: "What is the employee's new salary?",
+      },
+      {
+        type: "input",
+        name: "newtitle",
+        message: "What is the employee's new title?",
+      },
+    ])
+    .then((answerRole) => {
+      // var title = answerRole.title;
+      // var salary = answerRole.salary;
+
+      title = answerRole.newtitle;
+      salary = answerRole.newSalary;
+
+      // var was removed
+      console.log(answerRole);
+      console.log(title);
 
       inquirer
         .prompt([
           {
             type: "input",
-            name: "newSalary",
-            message: "What is the employee's new salary?",
-          },
-          {
-            type: "input",
-            name: "newtitle",
-            message: "What is the employee's new title?",
+            name: "department",
+            message: "What is the employee's department_id?",
           },
         ])
-        .then((answerRole) => {
-          var title = answerRole.title;
-          var salary = answerRole.salary;
-
-          console.table(result);
-
-          inquirer
-            .prompt([
-              {
-                type: "input",
-                name: "department",
-                message: "What is the emplyee's department_id?",
-              },
-            ])
-            .then((answerID) => {
-              var department_id = answerID.roleID;
-              connection.query(
-                `insert into roles (title,salary, department_id) values (?,?,?)`,
-                [title, salary, department_id],
-                function (err, result, fields) {
-                  if (err) throw err;
-        
-                }
-              );
-            });
+        .then((answerID) => {
+          var department_id = answerID.roleID;
+          connection.query(
+            `insert into roles (title,salary, department_id) values (?,?,?)`,
+            [title, salary, department_id],
+            function (err, result, fields) {
+              if (err) throw err;
+            }
+          );
+          init();
         });
-    }
-
-const init = async () => {
-  try {
-    // connect to mysql server and sql database
-    await connection.connect(function (err) {
-      if (err) throw err;
-      console.log("connected as id" + connection.threadId);
     });
-
-    const answers = await inquirer
-      .prompt([
-        {
-          type: "list",
-          name: "action",
-          message: "how to update the chart?",
-          choices: [
-            "view all employees",
-            "view all departments",
-            "view all roles",
-            "add employees",
-            "add departments",
-            "add roles",
-            "update employee roles",
-          ],
-        },
-      ])
-      .then((answers) => {
-        console.log(JSON.stringify(answers));
-        switch (answers.action) {
-          case "view all employees":
-            viewEmployees();
-            break;
-
-          case "view all departments":
-            viewDepartments();
-            break;
-
-          case "view all roles":
-            viewRoles();
-            break;
-
-          case "add employee":
-            addEmployee();
-            break;
-
-          case "add department":
-            addDepartment();
-            break;
-
-          case "add role":
-            addRole();
-            break;
-
-          case "update employee role":
-            updateEmployeeRole();
-            break;
-
-          default:
-            connection.end();
-            break;
-        }
-      });
-  } catch (err) {
-    console.log(err);
-  }
-};
-
-init();
+}
 
 module.exports = connection;

@@ -50,7 +50,7 @@ julia.horan28@gmail.com
 
 ## Repo
 
-https://github.com/Juliafrances28/HappyThanksgiving
+https://github.com/Juliafrances28/EmployeeManagementSystem
 
 ## Demonstration video
 

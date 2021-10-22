@@ -53,5 +53,5 @@ julia.horan28@gmail.com
 https://github.com/Juliafrances28/EmployeeManagementSystem
 
 ## Demonstration video
+https://drive.google.com/file/d/1FjOdwtRZIhy8_59JFW4JZrqMssLHVnRU/view
 
-watch the video to learn more about the project
